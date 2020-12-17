@@ -1,0 +1,91 @@
+---
+title: "Test Regression Trees"
+author: "Marian Eberl (TUM)"
+date: "`r Sys.Date()`"
+output:
+  html_notebook:
+    toc: yes
+  html_document:
+    df_print: paged
+    toc: yes
+  pdf_document: default
+always_allow_html: true
+---
+
+
+```{r}
+# project:      SPN - Data Analysis  
+# script:       x1.01.an_test.regression.trees.Rmd  
+# author:       Marian Eberl  
+# recent date:  2020-12-17
+# version:
+# req packages: 
+# content:		  
+# used in:  
+# dependend on:  
+# comments:  
+# execution time:  
+# quality check: 
+```
+
+#Set document paramenters
+
+```{r setup, include=FALSE, warning=TRUE}
+
+# Set basic parameters
+infile_training        <- "../data_public/x3.08.an_ear_strata_train.RData"
+
+output_dir_tables      <- "../output/pub_files/"
+save_workspace         <- FALSE
+
+
+load_packages          <- c("tidyverse", "rpart", "partykit")
+add_required_packages  <- c("knitr", "plotly")
+
+
+# Check if required packages are installed
+lapply(c(load_packages, add_required_packages), requireNamespace)
+
+# Load packages
+lapply(load_packages, library, character.only = TRUE)
+
+# Set global options
+options(nwarnings = 10000)
+#testthat::local_edition(3)
+
+```
+
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+# Data preparations
+
+# Analysis
+
+## Trying to create the first tree
+
+```{r}
+library("rpart")
+library("partykit")
+library("tidyverse")
+set.seed(2048)
+
+# train_set <- ear_strata %>%
+#   select(age, region, sex, year, fu_time, t_site, ex) %>% 
+#   mutate(across(is.character, as.factor)) %>%
+#   slice_sample(prop = 0.2)
+
+#save(train_set, file=paste0(output_dir_tables,"x3.08.an_ear_strata_train.RData"))
+
+load(infile_training)
+
+rpart_tree <- rpart(ex ~ age + region + sex + year + fu_time + t_site, data=train_set)
+
+plot(rpart_tree)
+
+rparty_tree <- as.party(rpart_tree)
+
+plot(rparty_tree)
+
+```
+
