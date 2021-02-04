@@ -32,24 +32,28 @@ always_allow_html: true
 
 ```{r setup, include=FALSE, warning=TRUE}
 
-# Set basic parameters
+#----- Set basic parameters
+
+##---- Files
+
 infile_training        <- "../data_public/x3.08.an_ear_strata_train.RData"
 
 output_dir_tables      <- "../output/pub_files/"
 save_workspace         <- FALSE
 
 
+##---- Packages
 load_packages          <- c("tidyverse", "rpart", "partykit")
 add_required_packages  <- c("knitr", "plotly")
 
-
-# Check if required packages are installed
+### Check if required packages are installed
 lapply(c(load_packages, add_required_packages), requireNamespace)
 
-# Load packages
+### Load packages
 lapply(load_packages, library, character.only = TRUE)
 
-# Set global options
+##---- Options
+### Set global options
 options(nwarnings = 10000)
 #testthat::local_edition(3)
 
@@ -78,6 +82,11 @@ set.seed(2048)
 #save(train_set, file=paste0(output_dir_tables,"x3.08.an_ear_strata_train.RData"))
 
 load(infile_training)
+
+#set all uninformative values to 0
+rpart_tree %>%
+  mutate(ex = case_when(ex > -0.01 & ex < 0.01 ~ 0,
+                        TRUE                   ~ ex))
 
 rpart_tree <- rpart(ex ~ age + region + sex + year + fu_time + t_site, data=train_set)
 
